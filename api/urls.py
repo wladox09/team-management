@@ -1,7 +1,12 @@
 from django.urls import path
+
+from api.tasks import check_size_team
+
 from .views import *
 
 app_name = 'api'
+
+check_size_team(repeat=1)
 
 urlpatterns = [
     path('v1/team', Team_APIView.as_view()),

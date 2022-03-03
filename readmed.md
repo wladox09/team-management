@@ -15,3 +15,7 @@ python manage.py migrate
 ## run server
 
 python manage.py runserver o python manage.py runserver localhost:3000
+
+## Repeating Tasks
+
+python manage.py process_tasks

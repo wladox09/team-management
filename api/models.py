@@ -1,8 +1,11 @@
+from datetime import datetime
 from django.db import models
 from django.dispatch import receiver
 from model_utils.models import TimeStampedModel
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
+from django.core.mail import send_mail as sm
+import threading
 
 
 class User(AbstractUser):
@@ -25,14 +28,33 @@ class Team(TimeStampedModel):
     def __str__(self):
         return self.name
 
+
 class Member(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    date_joined = models.DateField()
+    date_joined = models.DateField(default=datetime.now, blank=True)
 
 
 @receiver(post_save, sender=Team)
 def send_mail(sender, instance, created, **kwargs):
     if created:
-        #Busar admins y notificar por email
-        print(instance)
+        subject = 'Creado nuevo equipo'
+        message = 'Se ha creado el equipo %s' % (instance.name)
+        x = threading.Thread(target=send, args=(subject, message))
+        x.start()
+
+
+def send(subject, message):
+    try:
+        users = User.objects.filter(is_superuser=True)
+        res = sm(
+            subject=subject,
+            message=message,
+            from_email='team-management@gmail.com',
+            recipient_list=list(map(lambda user: user.email, users)),
+            fail_silently=True,
+        )
+        if res == 0:
+            print("Mail not send")
+    except NameError:
+        print(NameError)
