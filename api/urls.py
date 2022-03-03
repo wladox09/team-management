@@ -6,7 +6,7 @@ from .views import *
 
 app_name = 'api'
 
-check_size_team(repeat=1)
+check_size_team(repeat=300)
 
 urlpatterns = [
     path('v1/team', Team_APIView.as_view()),

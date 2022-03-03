@@ -1,3 +1,4 @@
+import base64
 from datetime import date
 from django.shortcuts import render
 
@@ -11,6 +12,7 @@ from .serializers import UserSerializers
 from .models import Member, Team, User
 from rest_framework import status
 from django.http import Http404
+import numpy as np
 
 
 class Team_APIView(APIView):
@@ -21,8 +23,12 @@ class Team_APIView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        members = request.data.pop("members", None)
-        serializerInput = TeamInputSerializers(data=request.data)
+        imageb64 = None
+        if request.data['image']:
+            imageb64 = base64.b64encode(request.data['image'].read())
+        members = list(request.data['members'].replace('[', '').replace(']', '').replace(',', ''))
+        data = {'name': request.data['name'], 'image': imageb64}
+        serializerInput = TeamInputSerializers(data=data)
         if serializerInput.is_valid():
             team = serializerInput.save()
             for member in members:
@@ -51,14 +57,22 @@ class Team_APIView_Detail(APIView):
     def put(self, request, pk, format=None):
         team = self.get_object(pk)
         serializer = TeamSerializers(team)
-        membersUpdate = request.data.pop("members", None)
+
+        imageb64 = None
+        if request.data['image']:
+            imageb64 = base64.b64encode(request.data['image'].read())
+        membersUpdate = list(
+            request.data['members'].replace('[', '').replace(']', '').replace(',', ''))
+        membersUpdate = list(map(lambda member: int(member), membersUpdate))
+        data = {'name': request.data['name'], 'image': imageb64}
+
         membersDB = list(
             map(lambda member: member['id'], serializer.data['members']))
-        serializerInput = TeamInputSerializers(team, data=request.data)
+        serializerInput = TeamInputSerializers(team, data=data)
 
         if serializerInput.is_valid():
             serializerInput.save()
-            if membersDB != membersUpdate:
+            if not np.array_equal(membersDB, membersUpdate):
                 for memberUpdate in membersUpdate:
                     if not memberUpdate in membersDB:
                         serializerMember = MemberSerializers(

@@ -10,6 +10,8 @@ pip install -r requirements.txt
 
 ## Migraciones de django
 
+python manage.py makemigrations
+
 python manage.py migrate
 
 ## run server

@@ -17,7 +17,7 @@ class User(AbstractUser):
 
 class Team(TimeStampedModel):
     name = models.CharField(max_length=50, null=False, blank=True)
-    image = models.CharField(max_length=9000, null=False, blank=True)
+    image = models.BinaryField(editable=True, null=True, blank=True)
     date_published = models.DateTimeField(
         auto_now_add=True, verbose_name="date published")
     date_updated = models.DateTimeField(

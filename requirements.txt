@@ -2,4 +2,5 @@ Django==3.2.12
 djangorestframework==3.13.1
 django-model-utils==4.2.0
 python-dotenv==0.19.2
-jango-background-tasks=1.2.5
+jango-background-tasks==1.2.5
+numpy==1.21.5

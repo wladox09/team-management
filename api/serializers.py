@@ -32,6 +32,7 @@ class MemberSerializers(serializers.ModelSerializer):
 
 class TeamSerializers(serializers.ModelSerializer):
     members = serializers.SerializerMethodField()
+    image = serializers.CharField()
 
     def get_members(self, instance):
         rows = []
