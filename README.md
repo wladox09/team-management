@@ -14,10 +14,10 @@ python manage.py makemigrations
 
 python manage.py migrate
 
-## run server
+## Run server
 
 python manage.py runserver o python manage.py runserver localhost:3000
 
-## Repeating Tasks
+## Run Tasks
 
 python manage.py process_tasks
